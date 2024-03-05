@@ -14,6 +14,7 @@ let PPI, PPCM;
 const NUM_OF_TRIALS       = 12;     // The numbers of trials (i.e., target selections) to be completed
 let continue_button;
 let legendas;                       // The item list from the "legendas" CSV
+let cidades;
 
 // Metrics (DO NOT CHANGE!)
 let testStartTime, testEndTime;     // time between the start and end of one attempt (8 trials)
@@ -147,12 +148,15 @@ function mousePressed()
     {
       // Check if the user clicked over one of the targets
       if (targets[i].clicked(mouseX, mouseY)) 
-      {
-        targets[i].visitTarget();
-        
+      { 
         // Checks if it was the correct target
-        if (targets[i].id === trials[current_trial] + 1) hits++;
-        else misses++;
+        if (targets[i].id === trials[current_trial] + 1) {
+          targets[i].visitTarget();
+          hits++;
+        } else {
+          targets[i].incorrectTarget();
+          misses++;
+        }
         
         current_trial++;              // Move on to the next trial/target
         break;
@@ -175,7 +179,7 @@ function mousePressed()
         continue_button.position(width/2 - continue_button.size().width/2, height/2 - continue_button.size().height/2);
         
         // Reset all targets
-        for (var i = 0; i < legendas.getRowCount(); i++) targets[i].unvisitTarget();
+        for (var i = 0; i < legendas.getRowCount(); i++) targets[i].resetTarget();
       }
     }
     // Check if this was the first selection in an attempt
