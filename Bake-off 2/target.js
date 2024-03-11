@@ -14,9 +14,14 @@ class Target
   
   // Checks if a mouse click took place
   // within the target
-  clicked(mouse_x, mouse_y)
-  {
-    return dist(this.x, this.y, mouse_x, mouse_y) < this.width / 2;
+  clicked(mouse_x, mouse_y) {
+    // Verifica se o clique do mouse está dentro do retângulo
+    return (
+      mouse_x >= this.x - this.width / 2 &&
+      mouse_x <= this.x + this.width / 2 &&
+      mouse_y >= this.y - this.width / 2 &&
+      mouse_y <= this.y + this.width / 2
+    );
   }
   
 // Draws the target (i.e., a circle)
