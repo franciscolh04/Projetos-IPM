@@ -1,11 +1,12 @@
 // Target class (position and width)
 class Target
 {
-  constructor(x, y, w, l, id)
+  constructor(x, y, w, h, l, id)
   {
     this.x      = x;
     this.y      = y;
     this.width  = w;
+    this.height = h;
     this.label  = l;
     this.id     = id;
     this.visited = false;
@@ -19,8 +20,8 @@ class Target
     return (
       mouse_x >= this.x - this.width / 2 &&
       mouse_x <= this.x + this.width / 2 &&
-      mouse_y >= this.y - this.width / 2 &&
-      mouse_y <= this.y + this.width / 2
+      mouse_y >= this.y - this.height / 2 &&
+      mouse_y <= this.y + this.height / 2
     );
   }
   
@@ -37,14 +38,19 @@ class Target
       fill(color(0, 128, 0));
     }
     
-    rect(this.x - (this.width/2), this.y -(this.width/2) , this.width,  this.width);
+    rect(this.x - (this.width/2), this.y -(this.height/2) , this.width,  this.height);
     
     // Draw label
+    textFont("Arial", 15);
+    textStyle(BOLD);
+    fill(color(255,255,255));
+    textAlign(CENTER);
+    text(this.label[1].toUpperCase() + this.label[2] + this.label[3], this.x, this.y - 12);
     textFont("Arial", 20);
     textStyle(BOLD);
     fill(color(255,255,255));
     textAlign(CENTER);
-    text(this.label, this.x, this.y);
+    text(this.label, this.x, this.y + 12);
   }
   
   visitTarget() {
