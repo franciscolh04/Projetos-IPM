@@ -1,0 +1,11 @@
+## Process:
+9,88/10
+
+## Success rate:
+4,84/5
+
+## User Experience Questionnaire (UEQ):
+4/5
+
+## Final grade:
+19/20
