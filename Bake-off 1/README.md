@@ -1,8 +1,8 @@
 ## Design process:
-9,88/10
+9.88/10
 
 ## Success rate:
-4,84/5
+4.84/5
 
 ## UEQ:
 4/5
