@@ -4,7 +4,7 @@
 ## Success rate:
 4,84/5
 
-## User Experience Questionnaire (UEQ):
+## UEQ:
 4/5
 
 ## Final grade:
