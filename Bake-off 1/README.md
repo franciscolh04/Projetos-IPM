@@ -1,4 +1,4 @@
-## Design Process:
+## Design process:
 9,88/10
 
 ## Success rate:
