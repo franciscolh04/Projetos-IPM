@@ -5,32 +5,32 @@ class Target
   constructor(x, y, w, h, l, id)
   {
     const colorMap = {
-      "a": color(255, 131, 96),
+      "a": color(255, 171, 1),
       //"b": color(0, 128, 0),
       //"c": color(139, 0, 0),
       //"d": color(255, 140, 0),
-      "é": color(125, 206, 230), 
-      "e": color(125, 206, 230), 
+      "é": color(255, 106, 0), 
+      "e": color(255, 106, 0), 
       //"f": color(139, 0, 139),
       //"g": color(139, 139, 0),
-      "h": color(232, 226, 136),
-      "i": color(60, 219, 211),
+      "h": color(255, 64, 21),
+      "i": color(181,26,0),
       //"j": color(0, 255, 255),
       //"k": color(255, 255, 0),
-      "l": color(255, 255, 255),
+      "l": color(185, 45, 93),
       //"m": color(128, 128, 128),
-      "n": color(128, 0, 0),
-      "o": color(128, 128, 0),
+      "n": color(152, 42, 188),
+      "o": color(77, 34, 178),
       //"p": color(0, 128, 0),
       //"q": color(128, 0, 128),
-      "r": color(0, 128, 128),
+      "r": color(0, 161, 216),
      // "s": color(0, 0, 128),
       //"t": color(128, 0, 0),
-      "u": color(0, 128, 0),
+      "u": color(118, 187, 64),
       //"v": color(0, 0, 128),
       //"w": color(128, 128, 0),
       //"x": color(0, 128, 128),
-      "y": color(128, 0, 128),
+      "y": color(195, 209, 23),
       //"z": color(128, 128, 128)
     };
     
@@ -45,7 +45,8 @@ class Target
     this.visited = false;
     this.incorrect = false;
     this.color = colorMap[this.label[1]];
-    this.textColor = (red(this.color) * 0.299 + green(this.color) * 0.587 + blue(this.color) * 0.144) > 127 ? color(0) : color(255);
+    this.textColor = color(0, 0, 0);
+    //this.textColor = (red(this.color) * 0.299 + green(this.color) * 0.587 + blue(this.color) * 0.144) > 127 ? color(0) : color(255);
   }
   
   
@@ -65,7 +66,6 @@ class Target
   // and its label
   draw()
   {
-    
     // Draw target
     if (this.incorrect) {
       fill(color(255, 140, 0));
@@ -76,7 +76,7 @@ class Target
     }
     
     rect(this.x - (this.width/2), this.y -(this.height/2) , this.width,  this.height);
-    
+  
     // Draw label
     textFont("Arial", 15);
     textStyle(BOLD);
