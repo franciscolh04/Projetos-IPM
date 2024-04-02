@@ -33,6 +33,10 @@ let targets               = [];
 const GRID_ROWS           = 8;      // We divide our 80 targets in a 8x10 grid
 const GRID_COLUMNS        = 10;     // We divide our 80 targets in a 8x10 grid
 
+// Sound objects
+let endSound = new Audio("Sounds/end.wav");
+let clickSound = new Audio("Sounds/click.wav");
+
 // Ensures important data is loaded before the program starts
 function preload()
 {
@@ -43,11 +47,16 @@ function preload()
 // Runs once at the start
 function setup()
 {
-  createCanvas(700, 500);    // window size in px before we go into fullScreen()
+  createCanvas(725, 550);    // window size in px before we go into fullScreen()
   frameRate(60);             // frame rate (DO NOT CHANGE!)
-  
   randomizeTrials();         // randomize the trial order at the start of execution
   drawUserIDScreen();        // draws the user start-up screen (student ID and display size)
+  textFont("Arial", 18);     // font size for the majority of the text
+  fill(255, 255, 255);        // text color (white)
+  textStyle(BOLD);              // set text style (bold)
+  text("Dicas:", 30, 300);
+  textStyle(NORMAL);
+  text("As palavras estão organizadas por ordem alfabética e agrupadas por\ncores, onde cada cor indica as primeiras duas primeiras letras do nome.\n\nCada palavra tem uma abreviação única destacada no topo do respetivo alvo.\n\nVai tocar um som sempre que um alvo for clicado.\n\nNão te esqueças que o tempo só começa a contar após clicares no primeiro alvo,\nportanto não tenhas problemas em perceber como o protótipo está organizado.", 30, 330);
 }
 
 // Runs every frame and redraws the screen
@@ -83,6 +92,8 @@ function draw()
 // Print and save results at the end of 54 trials
 function printAndSavePerformance()
 {
+  endSound.play();
+
   // DO NOT CHANGE THESE! 
   let accuracy			= parseFloat(hits * 100) / parseFloat(hits + misses);
   let test_time         = (testEndTime - testStartTime) / 1000;
@@ -140,6 +151,7 @@ function printAndSavePerformance()
 // Mouse button was pressed - lets test to see if hit was in the correct target
 function mousePressed() 
 {
+  clickSound.currentTime = 0;
   // Only look for mouse releases during the actual test
   // (i.e., during target selections)
   if (draw_targets)
@@ -148,12 +160,15 @@ function mousePressed()
     {
       // Check if the user clicked over one of the targets
       if (targets[i].clicked(mouseX, mouseY)) 
-      { 
+      {
+
         // Checks if it was the correct target
         if (targets[i].id === trials[current_trial] + 1) {
+          clickSound.play();
           targets[i].visitTarget();
           hits++;
         } else {
+          clickSound.play();
           targets[i].incorrectTarget();
           misses++;
         }
@@ -190,6 +205,8 @@ function mousePressed()
 // Evoked after the user starts its second (and last) attempt
 function continueTest()
 {
+  endSound.pause();
+  endSound.currentTime = 0;
   // Re-randomize the trial order
   randomizeTrials();
   
@@ -205,27 +222,40 @@ function continueTest()
 }
 
 // Creates and positions the UI targets
-function createTargets(target_size_x, target_size_y, horizontal_gap, vertical_gap)
+function createTargets(target_size_x, target_size_y, horizontal_gap, vertical_gap, screen_width, screen_height)
 {
   // Define the margins between targets by dividing the white space 
   // for the number of targets minus one
-  h_margin = horizontal_gap / (GRID_COLUMNS -1);
-  v_margin = vertical_gap / (GRID_ROWS - 1);
-  
+  h_margin = horizontal_gap / (GRID_COLUMNS -1) * 0.3;
+  v_margin = vertical_gap / (GRID_ROWS - 1) * 0.3;
+  left_margin = (screen_width - (target_size_x * GRID_COLUMNS + h_margin * (GRID_COLUMNS - 1))) / 2;
+  top_margin = (screen_height - (target_size_y * GRID_ROWS + v_margin * (GRID_ROWS - 1))) / 2;
   // Set targets in a 8 x 10 grid
   for (var r = 0; r < GRID_ROWS; r++)
   {
     for (var c = 0; c < GRID_COLUMNS; c++)
     {
-      let target_x = 40 + (h_margin + target_size_x) * c + target_size_x/2;        // give it some margin from the left border
-      let target_y = (v_margin + target_size_y) * r + target_size_y/2;
+      let target_x = left_margin + (h_margin + target_size_x) * c + target_size_x/2;        // give it some margin from the left border
+      let target_y = top_margin + (v_margin + target_size_y) * r + target_size_y/2;
       
       // Find the appropriate label and ID for this target
       let legendas_index = c + GRID_COLUMNS * r;
       let target_id = legendas.getNum(legendas_index, 0);  
-      let target_label = legendas.getString(legendas_index, 1);   
+      let target_label = legendas.getString(legendas_index, 1);
+      let hintLen = 3
       
-      let target = new Target(target_x, target_y + 40, target_size_x, target_size_y, target_label, target_id);
+      if (legendas_index == legendas.getRowCount() - 1 || legendas_index == 0) {
+        hintLen = 3;
+      } 
+      else if (target_label.substring(0,3) == legendas.getString(legendas_index + 1, 1).substring(0,3) || target_label.substring(0,3) == legendas.getString(legendas_index - 1, 1).substring(0,3)) {
+        if (target_label.substring(0,4) == legendas.getString(legendas_index + 1, 1).substring(0,4) || target_label.substring(0,4) == legendas.getString(legendas_index - 1, 1).substring(0,4)){
+          hintLen = 5;
+        }
+        else {
+          hintLen = 4;
+        }
+      }
+      let target = new Target(target_x, target_y, target_size_x, target_size_y, target_label, target_id, hintLen);
       targets.push(target);
     }  
   }
@@ -264,7 +294,7 @@ function windowResized()
     }
     // Creates and positions the UI targets according to the white space defined above (in cm!)
     // 80 represent some margins around the display (e.g., for text)
-    createTargets(target_size_x * PPCM, target_size_y * PPCM, horizontal_gap * PPCM - 140, vertical_gap * PPCM - 140);
+    createTargets(target_size_x * PPCM, target_size_y * PPCM, horizontal_gap * PPCM, vertical_gap * PPCM, screen_width*PPCM, screen_height*PPCM);
 
     // Starts drawing targets immediately after we go fullscreen
     draw_targets = true;
